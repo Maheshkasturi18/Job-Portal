@@ -1,9 +1,10 @@
 // JobDetails.tsx
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams } from "react-router-dom";
 import { MapPin, Building2, Clock, Send } from "lucide-react";
 import { useStore } from "../store";
 import { Job } from "../types";
+import axios from "axios";
 
 function JobDetails() {
   const { id } = useParams();
@@ -11,17 +12,17 @@ function JobDetails() {
   const currentUser = useStore((state) => state.currentUser);
   const token = currentUser?.token;
   const [job, setJob] = useState<Job | null>(null);
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
     async function fetchJob() {
       try {
-        const res = await fetch(`/api/jobs/${id}`, {
+        const response = await axios.get(`http://localhost:3000/api/jobs/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        const data = await res.json();
-        setJob(data);
+        setJob(response.data);
       } catch (error) {
         console.error("Error fetching job details:", error);
       }
@@ -29,25 +30,11 @@ function JobDetails() {
     if (token) fetchJob();
   }, [id, token]);
 
-  const handleApply = async () => {
-    try {
-      const res = await fetch(`/api/jobs/${id}/apply`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ resumeUrl: "" }), // Optionally add resume URL if available
-      });
-      if (res.ok) {
-        alert("Application submitted successfully!");
-      } else {
-        alert("Error submitting application.");
-      }
-    } catch (err) {
-      console.error("Application error:", err);
-      alert("Error submitting application.");
+  const handleApply = () => {
+    if (!currentUser) {
+      return navigate("/login");
     }
+    navigate(`/jobs/${id}/apply`);
   };
 
   if (!job) return <div>Loading job details...</div>;

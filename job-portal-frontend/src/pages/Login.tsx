@@ -1,11 +1,8 @@
-// Login.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
 import { LogIn } from "lucide-react";
 import { useStore } from "../store";
+import axios from "axios";
 
 function Login() {
   const navigate = useNavigate();
@@ -17,32 +14,27 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // Firebase sign in
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
+      const response = await axios.post("http://localhost:3000/api/login", {
         email,
-        password
+        password,
+      });
+
+      const data = response.data;
+
+      const { token, user } = data;
+
+      // ✅ Save session data
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem(
+        "expiresAt",
+        String(Date.now() + 2 * 60 * 60 * 1000)
       );
-      const user = userCredential.user;
-      // Get Firebase ID token
-      const token = await user.getIdToken();
-      // Fetch additional profile from Firestore
-      const docSnap = await getDoc(doc(db, "users", user.uid));
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        // Save user data, including uid and token, in global state for use in API calls
-        setCurrentUser({
-          uid: user.uid,
-          token,
-          name: userData.name,
-          email: userData.email,
-          role: userData.role,
-          company: userData.company, // Optional field
-        });
-        navigate(`/${userData.role}/dashboard`);
-      }
+
+      setCurrentUser({ ...user, token });
+      navigate(`/${user.role}/dashboard`);
     } catch (err) {
-      console.log("Error object:", err);
+      console.error("Login error:", err);
       const errorMessage =
         (err as Error).message || "An unknown error occurred.";
       setError(errorMessage);

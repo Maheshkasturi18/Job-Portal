@@ -25,8 +25,8 @@ export interface Application {
 }
 
 export interface User {
-  uid: string;
-  token: string; // Firebase ID token
+  _id: string;
+  token: string;
   // id: string;
   name: string;
   email: string;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useStore } from './store';
 import Navbar from './components/Navbar';
@@ -10,9 +10,24 @@ import JobSeekerDashboard from './pages/JobSeekerDashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import CreateJob from './pages/CreateJob';
+import JobApplicationForm from './pages/JobAppplicationForm';
 
 function App() {
   const isDarkMode = useStore((state) => state.isDarkMode);
+  const setCurrentUser = useStore((state) => state.setCurrentUser);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const user = localStorage.getItem("user");
+    const expiresAt = localStorage.getItem("expiresAt");
+
+    if (token && user && expiresAt && Date.now() < Number(expiresAt)) {
+      setCurrentUser({ ...JSON.parse(user), token });
+    } else {
+      localStorage.clear();
+      setCurrentUser(null);
+    }
+  }, [setCurrentUser]);
 
   return (
     <div className={`min-h-screen ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
@@ -27,8 +42,9 @@ function App() {
             <Route path="/jobseeker/dashboard" element={<JobSeekerDashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-
             <Route path="/employer/create-job" element={<CreateJob />} />
+            <Route path="/employer/create-job/:id" element={<CreateJob />} />
+            <Route path="/jobs/:id/apply" element={<JobApplicationForm />} />
           </Routes>
         </main>
       </BrowserRouter>

@@ -1,10 +1,8 @@
 // Register.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from '../firebase'; 
 import { UserPlus } from "lucide-react";
+import axios from "axios";
 
 function Register() {
   const navigate = useNavigate();
@@ -17,26 +15,19 @@ function Register() {
   });
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>)  => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // Create user with Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
+      const response = await axios.post(
+        "http://localhost:3000/api/register",
+        formData
       );
-      const user = userCredential.user;
-      // Save additional info into Firestore
-      await setDoc(doc(db, "users", user.uid), {
-        name: formData.name,
-        email: formData.email,
-        role: formData.role,
-        company: formData.role === "employer" ? formData.company : "",
-      });
+      const data = response.data;
+      console.log("data", data);
+
       navigate("/login");
     } catch (err) {
-      console.log("Error object:", err);
+      console.error("Registration error:", err);
       const errorMessage =
         (err as Error).message || "An unknown error occurred.";
       setError(errorMessage);

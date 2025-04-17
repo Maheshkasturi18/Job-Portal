@@ -1,10 +1,20 @@
 // Home.tsx
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Briefcase, Search, Building2 } from "lucide-react";
 import { useStore } from "../store";
 
 function Home() {
   const isDarkMode = useStore((state) => state.isDarkMode);
+  const navigate = useNavigate();
+  const currentUser = useStore((state) => state.currentUser);
+
+  const handlePostJobClick = () => {
+    if (!currentUser || currentUser.role !== "employer") {
+      navigate("/login");
+    } else {
+      navigate("/employer/create-job");
+    }
+  };
 
   return (
     <div className={`${isDarkMode ? "text-white" : "text-gray-900"}`}>
@@ -20,12 +30,12 @@ function Home() {
           >
             Browse Jobs
           </Link>
-          <Link
-            to="/register"
-            className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition"
+          <button
+            onClick={handlePostJobClick}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
           >
             Post a Job
-          </Link>
+          </button>
         </div>
       </div>
       <div className="grid md:grid-cols-3 gap-8 mt-16">

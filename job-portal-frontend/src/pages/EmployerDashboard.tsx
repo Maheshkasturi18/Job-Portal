@@ -1,3 +1,4 @@
+// EmployerDashboard.tsx
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -13,70 +14,139 @@ import {
 } from "recharts";
 import { useStore } from "../store";
 import { Job } from "../types";
-// import { dummyJobs, dummyApplications } from '../data';
+import axios from "axios";
 
 function EmployerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
   const currentUser = useStore((state) => state.currentUser);
   const token = currentUser?.token;
-  const [jobs, setJobs] = useState([]);
-  const [applications, setApplications] = useState<{ jobId: string; status: string; [key: string]: any }[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [applications, setApplications] = useState<
+    {
+      jobId: string;
+      status: string;
+      [key: string]: any;
+    }[]
+  >([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch jobs
-        const resJobs = await fetch("/api/jobs", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const dataJobs = await resJobs.json();
-        // Filter jobs belonging to the employer
-        const employerJobs = dataJobs.filter(
-          (job: Job) => currentUser && job.employerId === currentUser.uid
-        );
-        setJobs(employerJobs);
+        // fetch all jobs
+        const queryParams = new URLSearchParams();
+        if (searchTerm) queryParams.append("title", searchTerm);
+        if (selectedCategory) queryParams.append("category", selectedCategory);
 
-        // Fetch applications (assumes backend endpoint returning all applications for employer's jobs)
-        const resApps = await fetch("/api/applications", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const dataApps = await resApps.json();
-        // Filter applications that correspond to the employer’s jobs
-        const filteredApps = dataApps.filter((app: { jobId: string; [key: string]: any }) =>
-          employerJobs.some((job: Job) => job._id === app.jobId)
+        const resJobs = await axios.get(
+          `http://localhost:3000/api/jobs?${queryParams.toString()}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
-        setApplications(filteredApps);
+        console.log("Query string:", queryParams.toString());
+        console.log(
+          "Full URL:",
+          `http://localhost:3000/api/jobs?${queryParams.toString()}`
+        );
+
+        console.log("Employee dashboard jobs list:", resJobs.data); // debugger check
+
+        // const allJobs: Job[] = Array.isArray(resJobs.data) ? resJobs.data : [];
+
+        // const employerJobs = allJobs.filter(
+        //   (job) => job.employerId === currentUser?._id
+        // );
+        // console.log("Fetched employerJobs:", employerJobs);
+        setJobs(resJobs.data);
+
+        // // fetch all applications
+        // const resApps = await axios.get(
+        //   "http://localhost:3000/api/applications",
+        //   {
+        //     headers: { Authorization: `Bearer ${token}` },
+        //   }
+        // );
+        // const allApps: any[] = Array.isArray(resApps.data) ? resApps.data : [];
+        // // filter applications for this employer's jobs
+        // const filteredApps = allApps.filter((app) =>
+        //   employerJobs.some((job) => job._id === app.jobId)
+        // );
+        // console.log("Fetched filteredApps:", filteredApps); // debugger check
+        // setApplications(filteredApps);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       }
     }
-    if (token) fetchData();
-  }, [currentUser, token]);
 
-  // const employerJobs = dummyJobs.filter(job => job.company === currentUser?.company);
-  // const applications = dummyApplications.filter(app =>
-  //   employerJobs.some(job => job.id === app.jobId)
-  // );
+    fetchData();
+  }, [currentUser]);
 
-  const monthlyData = [
-    { month: "Jan", jobs: 4 },
-    { month: "Feb", jobs: 6 },
-    { month: "Mar", jobs: 8 },
-    { month: "Apr", jobs: 5 },
-    { month: "May", jobs: 7 },
-    { month: "Jun", jobs: 9 },
-  ];
+  // dashboard summary counts
+  const pendingCount = applications.filter(
+    (app) => app.status === "pending"
+  ).length;
+  const acceptedCount = applications.filter(
+    (app) => app.status === "accepted"
+  ).length;
 
-  const categoryData = [
-    { name: "Development", value: 35 },
-    { name: "Design", value: 25 },
-    { name: "Marketing", value: 20 },
-    { name: "Sales", value: 20 },
-  ];
+  // const monthlyData = [
+  //   { month: "Jan", jobs: 4 },
+  //   { month: "Feb", jobs: 6 },
+  //   { month: "Mar", jobs: 8 },
+  //   { month: "Apr", jobs: 5 },
+  //   { month: "May", jobs: 7 },
+  //   { month: "Jun", jobs: 9 },
+  // ];
+
+  // const categoryData = [
+  //   { name: "Development", value: 35 },
+  //   { name: "Design", value: 25 },
+  //   { name: "Marketing", value: 20 },
+  //   { name: "Sales", value: 20 },
+  // ];
+
+  // compute monthly job postings (e.g., counts per month name)
+  const monthlyData = React.useMemo(() => {
+    console.log("Computing monthlyData from jobs:", jobs); // debugger check
+    const counts: Record<string, number> = {};
+    jobs.forEach((job) => {
+      console.log("job.postedDate =", job.postedDate); // debugger check
+      const date = new Date(job.postedDate);
+      const monthName = date.toLocaleString("default", { month: "short" });
+      counts[monthName] = (counts[monthName] || 0) + 1;
+    });
+    // transform into array sorted by calendar order
+    const monthOrder = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    return monthOrder
+      .filter((m) => counts[m])
+      .map((m) => ({ month: m, jobs: counts[m] }));
+  }, [jobs]);
+
+  // compute category distribution for pie chart
+  const categoryData = React.useMemo(() => {
+    console.log("Computing categoryData from jobs:", jobs); // debugger check
+    const counts: Record<string, number> = {};
+    jobs.forEach((job) => {
+      console.log("job.category =", job.category); // debugger check
+      counts[job.category] = (counts[job.category] || 0) + 1;
+    });
+    return Object.entries(counts).map(([name, value]) => ({ name, value }));
+  }, [jobs]);
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -112,9 +182,7 @@ function EmployerDashboard() {
           } p-6 rounded-lg shadow-md`}
         >
           <h3 className="text-lg font-semibold mb-2">Pending Review</h3>
-          <p className="text-3xl font-bold text-yellow-600">
-            {applications.filter((app) => app.status === "pending").length}
-          </p>
+          <p className="text-3xl font-bold text-yellow-600">{pendingCount}</p>
         </div>
         <div
           className={`${
@@ -122,9 +190,7 @@ function EmployerDashboard() {
           } p-6 rounded-lg shadow-md`}
         >
           <h3 className="text-lg font-semibold mb-2">Hired</h3>
-          <p className="text-3xl font-bold text-purple-600">
-            {applications.filter((app) => app.status === "accepted").length}
-          </p>
+          <p className="text-3xl font-bold text-purple-600">{acceptedCount}</p>
         </div>
       </div>
 
@@ -151,10 +217,10 @@ function EmployerDashboard() {
         <div
           className={`${
             isDarkMode ? "bg-gray-800" : "bg-white"
-          } p-6 rounded-lg shadow-md`}
+          } p-6 rounded-lg shadow-md overflow-visible`}
         >
           <h2 className="text-xl font-bold mb-4">Jobs by Category</h2>
-          <div className="h-80">
+          <div className="h-80 overflow-visible">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie

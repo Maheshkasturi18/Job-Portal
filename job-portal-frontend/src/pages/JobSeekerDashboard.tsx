@@ -11,13 +11,16 @@ import {
 } from "recharts";
 import { useStore } from "../store";
 import { Application } from "../types";
+import axios from "axios";
 
 function JobSeekerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
   const currentUser = useStore((state) => state.currentUser);
   const token = currentUser?.token;
   const [applications, setApplications] = useState<Application[]>([]);
-  const [chartData, setChartData] = useState<{ week: string; applications: number }[]>([]);
+  const [chartData, setChartData] = useState<
+    { week: string; applications: number }[]
+  >([]);
 
   // Fetch applications for the current job seeker from backend
   useEffect(() => {
@@ -27,13 +30,16 @@ function JobSeekerDashboard() {
           console.error("Current user is null");
           return;
         }
-        const res = await fetch(`/api/applications?userId=${currentUser.uid}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        setApplications(data);
+        const response = await axios.get(
+          `http://localhost:3000/api/applications?userId=${currentUser._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setApplications(response.data);
         // Process data for chart (e.g., group by week)
         const processedChartData = [
           { week: "Week 1", applications: 3 },
