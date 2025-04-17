@@ -10,7 +10,7 @@ function Home() {
 
   const handlePostJobClick = () => {
     if (!currentUser || currentUser.role !== "employer") {
-      navigate("/login");
+      navigate("/register");
     } else {
       navigate("/employer/create-job");
     }
