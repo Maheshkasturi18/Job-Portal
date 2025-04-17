@@ -26,18 +26,21 @@ function JobSeekerDashboard() {
   useEffect(() => {
     async function fetchApplications() {
       try {
-        if (!currentUser) {
-          console.error("Current user is null");
-          return;
-        }
+        // if (!currentUser || !currentUser._id) {
+        //   console.error("Current user or userId is undefined");
+        //   return;
+        // }
+
         const response = await axios.get(
-          `http://localhost:3000/api/applications?userId=${currentUser._id}`,
+          `http://localhost:3000/api/applications`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
+
+        console.log("Fetched applications:", response.data); // Debugging check
 
         setApplications(response.data);
         // Process data for chart (e.g., group by week)
@@ -52,7 +55,9 @@ function JobSeekerDashboard() {
         console.error("Error fetching applications:", error);
       }
     }
-    if (token) fetchApplications();
+    if (token && currentUser && currentUser._id) {
+      fetchApplications();
+    }
   }, [currentUser, token]);
 
   return (
@@ -156,7 +161,7 @@ function JobSeekerDashboard() {
                   }`}
                 >
                   <td className="px-6 py-4">{app.jobTitle || "N/A"}</td>
-                  <td className="px-6 py-4">{app.company || "N/A"}</td>
+                  {/* <td className="px-6 py-4">{app.company || "N/A"}</td> */}
                   <td className="px-6 py-4">
                     {new Date(app.appliedDate).toLocaleDateString()}
                   </td>

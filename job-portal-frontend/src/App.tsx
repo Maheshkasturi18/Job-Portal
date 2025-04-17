@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import CreateJob from './pages/CreateJob';
 import JobApplicationForm from './pages/JobAppplicationForm';
+import EmployerApplicationDetails from './pages/EmployerApplicationDetails';
 
 function App() {
   const isDarkMode = useStore((state) => state.isDarkMode);
@@ -45,6 +46,7 @@ function App() {
             <Route path="/employer/create-job" element={<CreateJob />} />
             <Route path="/employer/create-job/:id" element={<CreateJob />} />
             <Route path="/jobs/:id/apply" element={<JobApplicationForm />} />
+            <Route path="/employer/applications/:id" element={<EmployerApplicationDetails />} />
           </Routes>
         </main>
       </BrowserRouter>

@@ -17,6 +17,7 @@ function CreateJob() {
   const { id } = useParams<{ id?: string }>();
   const currentUser = useStore((state) => state.currentUser);
   const token = currentUser?.token;
+  const isDarkMode = useStore((state) => state.isDarkMode);
   const [jobData, setJobData] = useState<JobData>({
     title: "",
     description: "",
@@ -87,8 +88,16 @@ function CreateJob() {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6">
+    <div
+      className={`max-w-xl mx-auto p-6  rounded-lg shadow-md ${
+        isDarkMode ? "bg-gray-800 " : "bg-white "
+      }`}
+    >
+      <h2
+        className={`text-2xl font-bold mb-6 ${
+          isDarkMode ? "text-white " : "text-gray-800 "
+        }`}
+      >
         {isEditMode ? "Edit Job" : "Post a Job"}
       </h2>
       {error && (
@@ -100,7 +109,9 @@ function CreateJob() {
           placeholder="Job Title"
           value={jobData.title}
           onChange={handleChange}
-          className="w-full mb-4 p-3 border rounded dark:bg-gray-700"
+          className={`w-full mb-4 p-3 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white  text-gray-800"
+          }`}
           required
         />
         <textarea
@@ -108,7 +119,9 @@ function CreateJob() {
           placeholder="Job Description"
           value={jobData.description}
           onChange={handleChange}
-          className="w-full mb-4 p-3 border rounded dark:bg-gray-700"
+          className={`w-full mb-4 p-3 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white  text-gray-800"
+          }`}
           required
         />
         <input
@@ -116,7 +129,9 @@ function CreateJob() {
           placeholder="Location"
           value={jobData.location}
           onChange={handleChange}
-          className="w-full mb-4 p-3 border rounded dark:bg-gray-700"
+          className={`w-full mb-4 p-3 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white  text-gray-800"
+          }`}
           required
         />
         <input
@@ -124,7 +139,9 @@ function CreateJob() {
           placeholder="Category"
           value={jobData.category}
           onChange={handleChange}
-          className="w-full mb-4 p-3 border rounded dark:bg-gray-700"
+          className={`w-full mb-4 p-3 border rounded ${
+             isDarkMode ? "bg-gray-800 text-white" : "bg-white  text-gray-800"
+          }`}
         />
         <input
           name="salary"
@@ -132,14 +149,18 @@ function CreateJob() {
           placeholder="Salary"
           value={jobData.salary}
           onChange={handleChange}
-          className="w-full mb-4 p-3 border rounded dark:bg-gray-700"
+          className={`w-full mb-4 p-3 border rounded ${
+             isDarkMode ? "bg-gray-800 text-white" : "bg-white  text-gray-800"
+          }`}
         />
         <input
           name="type"
           placeholder="Job Type (Full-Time, Part-Time)"
           value={jobData.type}
           onChange={handleChange}
-          className="w-full mb-4 p-3 border rounded dark:bg-gray-700"
+          className={`w-full mb-4 p-3 border rounded ${
+             isDarkMode ? "bg-gray-800 text-white" : "bg-white  text-gray-800"
+          }`}
         />
         <button
           type="submit"

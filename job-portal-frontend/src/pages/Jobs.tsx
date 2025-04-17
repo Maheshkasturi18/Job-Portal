@@ -128,7 +128,7 @@ function Jobs() {
               return (
                 <div
                   key={job._id}
-                  className={`relative p-14 rounded-lg shadow-md transition ${
+                  className={`relative px-4 py-14 md:p-14 rounded-lg shadow-md transition ${
                     isDarkMode
                       ? "bg-gray-800 hover:bg-gray-700"
                       : "bg-white hover:bg-gray-50"

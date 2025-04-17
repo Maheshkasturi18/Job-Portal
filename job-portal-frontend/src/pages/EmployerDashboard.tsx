@@ -13,13 +13,15 @@ import {
   Cell,
 } from "recharts";
 import { useStore } from "../store";
-import { Job } from "../types";
+import { Job, Application } from "../types";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function EmployerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
   const currentUser = useStore((state) => state.currentUser);
   const token = currentUser?.token;
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [applications, setApplications] = useState<
     {
@@ -50,38 +52,43 @@ function EmployerDashboard() {
           "Full URL:",
           `http://localhost:3000/api/jobs?${queryParams.toString()}`
         );
-
-        console.log("Employee dashboard jobs list:", resJobs.data); // debugger check
-
-        // const allJobs: Job[] = Array.isArray(resJobs.data) ? resJobs.data : [];
-
-        // const employerJobs = allJobs.filter(
-        //   (job) => job.employerId === currentUser?._id
-        // );
-        // console.log("Fetched employerJobs:", employerJobs);
+        console.log("Employee dashboard jobs list:", resJobs.data);
         setJobs(resJobs.data);
 
-        // // fetch all applications
-        // const resApps = await axios.get(
-        //   "http://localhost:3000/api/applications",
-        //   {
-        //     headers: { Authorization: `Bearer ${token}` },
-        //   }
-        // );
+        // fetch all applications
+        const resApps = await axios.get(
+          "http://localhost:3000/api/applications",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         // const allApps: any[] = Array.isArray(resApps.data) ? resApps.data : [];
+
+        const allApps: Application[] = Array.isArray(resApps.data)
+          ? resApps.data.map((app) => ({
+              _id: app._id,
+              jobId: app.jobId,
+              jobTitle: app.jobTitle || "N/A",
+              appliedDate: app.appliedAt || new Date().toISOString(),
+              appliedAt: app.appliedAt || new Date().toISOString(),
+              fullName: app.fullName || "N/A",
+              status: app.status,
+              ...app,
+            }))
+          : [];
         // // filter applications for this employer's jobs
         // const filteredApps = allApps.filter((app) =>
         //   employerJobs.some((job) => job._id === app.jobId)
         // );
-        // console.log("Fetched filteredApps:", filteredApps); // debugger check
-        // setApplications(filteredApps);
+        console.log("Fetched filteredApps:", allApps); // debugger check
+        setApplications(allApps);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
       }
     }
 
-    fetchData();
-  }, [currentUser]);
+    if (currentUser) fetchData();
+  }, [currentUser, searchTerm, selectedCategory]);
 
   // dashboard summary counts
   const pendingCount = applications.filter(
@@ -90,6 +97,10 @@ function EmployerDashboard() {
   const acceptedCount = applications.filter(
     (app) => app.status === "accepted"
   ).length;
+
+  const handleViewDetails = (application: Application) => {
+    navigate(`/employer/applications/${application._id}`);
+  };
 
   // const monthlyData = [
   //   { month: "Jan", jobs: 4 },
@@ -265,6 +276,7 @@ function EmployerDashboard() {
                 <th className="px-6 py-3 text-left">Applicant</th>
                 <th className="px-6 py-3 text-left">Date</th>
                 <th className="px-6 py-3 text-left">Status</th>
+                <th className="px-6 py-3 text-left">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -276,11 +288,9 @@ function EmployerDashboard() {
                   }`}
                 >
                   <td className="px-6 py-4">{app.jobTitle || "N/A"}</td>
-                  <td className="px-6 py-4">{app.applicantName || "N/A"}</td>
+                  <td className="px-6 py-4">{app.fullName || "N/A"}</td>
                   <td className="px-6 py-4">
-                    {new Date(
-                      app.appliedDate.seconds * 1000
-                    ).toLocaleDateString()}
+                    {new Date(app.appliedAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
                     <span
@@ -294,6 +304,15 @@ function EmployerDashboard() {
                     >
                       {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                     </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => handleViewDetails(app as Application)}
+                      // onClick={() => handleViewDetails(app)}
+                      className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                    >
+                      View Details
+                    </button>
                   </td>
                 </tr>
               ))}

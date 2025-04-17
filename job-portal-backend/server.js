@@ -218,6 +218,7 @@ const applicationSchema = new mongoose.Schema({
     email: { type: String, required: true },
     phone: { type: String, required: true },
     location: { type: String, required: true },
+    jobTitle:{ type: String, required: true },
     resumeLink: { type: String, required: true },
     linkedin: { type: String, default: '' },
     portfolio: { type: String, default: '' },
@@ -243,6 +244,7 @@ app.post(
                 email,
                 phone,
                 location,
+                jobTitle,
                 resumeLink,
                 linkedin = '',
                 portfolio = '',
@@ -252,7 +254,7 @@ app.post(
             } = req.body;
 
             // Basic required‑fields check
-            if (!fullName || !email || !phone || !location || !resumeLink) {
+            if (!fullName || !email || !phone || !location || !jobTitle || !resumeLink) {
                 return res.status(400).json({ message: 'Missing required application fields.' });
             }
 
@@ -266,6 +268,7 @@ app.post(
                 email,
                 phone,
                 location,
+                jobTitle,
                 resumeLink,
                 linkedin,
                 portfolio,
@@ -319,14 +322,13 @@ app.get(
     }
 );
 
-// 3.2) Get a single application by its ID
 app.get(
     '/api/applications/:id',
     authenticateToken,
     async (req, res) => {
         try {
             const appDoc = await Application.findById(req.params.id)
-                .populate('jobId', 'title company')
+                .populate('jobId', 'title company employerId')
                 .populate('userId', 'name email');
 
             if (!appDoc) return res.status(404).json({ message: 'Application not found' });
@@ -347,6 +349,39 @@ app.get(
     }
 );
 
+app.patch('/api/applications/:id', authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+  
+      if (!['pending', 'accepted', 'rejected'].includes(status)) {
+        return res.status(400).json({ message: 'Invalid status value.' });
+      }
+  
+      const application = await Application.findById(id).populate('jobId');
+  
+      if (!application) {
+        return res.status(404).json({ message: 'Application not found' });
+      }
+  
+      // Ensure only employer who posted the job can update
+      if (
+        req.user.role !== 'employer' ||
+        application.jobId.employerId.toString() !== req.user.id
+      ) {
+        return res.status(403).json({ message: 'Unauthorized' });
+      }
+  
+      application.status = status;
+      await application.save();
+  
+      res.json({ message: 'Application status updated successfully', application });
+    } catch (err) {
+      console.error('Error updating application status:', err);
+      res.status(500).json({ message: 'Error updating application status', error: err.message });
+    }
+  });
+  
 
 // =======================
 // Start Server

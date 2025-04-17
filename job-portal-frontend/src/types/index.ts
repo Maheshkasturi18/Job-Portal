@@ -16,12 +16,24 @@ export interface Application {
   _id: string;
   jobId: string;
   jobTitle: string;
-  company: string;
-  userId: string;
-  status: 'pending' | 'reviewed' | 'rejected' | 'accepted';
+  // company: string;
+  // userId: string;
+  // status: 'pending' | 'reviewed' | 'rejected' | 'accepted';
   appliedDate: string;
-  coverLetter: string;
-  resume: string;
+  // coverLetter: string;
+  // resume: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  location: string;
+  resumeLink: string;
+  linkedin?: string;
+  portfolio?: string;
+  experience?: string;
+  education?: string;
+  coverLetter?: string;
+  status: string;
+  createdAt: string;
 }
 
 export interface User {

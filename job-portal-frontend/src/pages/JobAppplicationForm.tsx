@@ -3,25 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useStore } from "../store";
 
-/**
- * JobApplicationForm
- * Fields:
- *  - fullName* (text)
- *  - email* (email)
- *  - phone* (tel)
- *  - location* (text)
- *  - resumeLink* (url)
- *  - linkedin (url)
- *  - portfolio (url)
- *  - experience (textarea)
- *  - education (textarea)
- *  - coverLetter (textarea)
- *
- * * = required
- */
 export default function JobApplicationForm() {
   const { id: jobId } = useParams();
   const navigate = useNavigate();
+  const isDarkMode = useStore((state) => state.isDarkMode);
   const currentUser = useStore((s) => s.currentUser);
   const token = currentUser?.token;
 
@@ -30,6 +15,7 @@ export default function JobApplicationForm() {
     email: "",
     phone: "",
     location: "",
+    jobTitle: "",
     resumeLink: "",
     linkedin: "",
     portfolio: "",
@@ -40,7 +26,9 @@ export default function JobApplicationForm() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -50,7 +38,14 @@ export default function JobApplicationForm() {
     setError(null);
 
     // Validate required
-    const required = ["fullName", "email", "phone", "location", "resumeLink"];
+    const required = [
+      "fullName",
+      "email",
+      "phone",
+      "location",
+      "jobTitle",
+      "resumeLink",
+    ];
     for (let field of required) {
       if (!formData[field as keyof typeof formData]) {
         setError(`Please fill in your ${field}`);
@@ -94,7 +89,13 @@ export default function JobApplicationForm() {
       {error && <div className="text-red-600">{error}</div>}
 
       <div>
-        <label className="block font-medium">Full Name*</label>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Full Name*
+        </label>
         <input
           name="fullName"
           type="text"
@@ -106,7 +107,13 @@ export default function JobApplicationForm() {
       </div>
 
       <div>
-        <label className="block font-medium">Email*</label>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Email*
+        </label>
         <input
           name="email"
           type="email"
@@ -118,7 +125,13 @@ export default function JobApplicationForm() {
       </div>
 
       <div>
-        <label className="block font-medium">Phone*</label>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Phone*
+        </label>
         <input
           name="phone"
           type="tel"
@@ -130,7 +143,13 @@ export default function JobApplicationForm() {
       </div>
 
       <div>
-        <label className="block font-medium">Location*</label>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Location*
+        </label>
         <input
           name="location"
           type="text"
@@ -142,7 +161,31 @@ export default function JobApplicationForm() {
       </div>
 
       <div>
-        <label className="block font-medium">Resume Link*</label>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Job Title*
+        </label>
+        <input
+          name="jobTitle"
+          type="text"
+          value={formData.jobTitle}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          required
+        />
+      </div>
+
+      <div>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Resume Link*
+        </label>
         <input
           name="resumeLink"
           type="url"
@@ -155,7 +198,13 @@ export default function JobApplicationForm() {
       </div>
 
       <div>
-        <label className="block font-medium">LinkedIn</label>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          LinkedIn
+        </label>
         <input
           name="linkedin"
           type="url"
@@ -167,7 +216,13 @@ export default function JobApplicationForm() {
       </div>
 
       <div>
-        <label className="block font-medium">Portfolio</label>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Portfolio
+        </label>
         <input
           name="portfolio"
           type="url"
@@ -179,7 +234,13 @@ export default function JobApplicationForm() {
       </div>
 
       <div>
-        <label className="block font-medium">Experience</label>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Experience
+        </label>
         <textarea
           name="experience"
           value={formData.experience}
@@ -190,7 +251,13 @@ export default function JobApplicationForm() {
       </div>
 
       <div>
-        <label className="block font-medium">Education</label>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Education
+        </label>
         <textarea
           name="education"
           value={formData.education}
@@ -201,7 +268,13 @@ export default function JobApplicationForm() {
       </div>
 
       <div>
-        <label className="block font-medium">Cover Letter</label>
+        <label
+          className={`block font-medium ${
+            isDarkMode ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Cover Letter
+        </label>
         <textarea
           name="coverLetter"
           value={formData.coverLetter}
