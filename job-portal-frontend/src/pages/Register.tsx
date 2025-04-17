@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserPlus } from "lucide-react";
 import axios from "axios";
+import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 
 function Register() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ function Register() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/register",
+        `${baseUrl}/api/register`,
         formData
       );
       const data = response.data;

@@ -15,6 +15,7 @@ import {
 import { useStore } from "../store";
 import { Job, Application } from "../types";
 import axios from "axios";
+import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 import { useNavigate } from "react-router-dom";
 
 function EmployerDashboard() {
@@ -42,7 +43,7 @@ function EmployerDashboard() {
         if (selectedCategory) queryParams.append("category", selectedCategory);
 
         const resJobs = await axios.get(
-          `http://localhost:3000/api/jobs?${queryParams.toString()}`,
+          `${baseUrl}/api/jobs?${queryParams.toString()}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -50,14 +51,14 @@ function EmployerDashboard() {
         console.log("Query string:", queryParams.toString());
         console.log(
           "Full URL:",
-          `http://localhost:3000/api/jobs?${queryParams.toString()}`
+          `${baseUrl}/api/jobs?${queryParams.toString()}`
         );
         console.log("Employee dashboard jobs list:", resJobs.data);
         setJobs(resJobs.data);
 
         // fetch all applications
         const resApps = await axios.get(
-          "http://localhost:3000/api/applications",
+          `${baseUrl}/api/applications`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

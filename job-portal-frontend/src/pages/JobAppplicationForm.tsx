@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useStore } from "../store";
+import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 
 export default function JobApplicationForm() {
   const { id: jobId } = useParams();
@@ -61,7 +62,7 @@ export default function JobApplicationForm() {
     setSubmitting(true);
     try {
       const res = await axios.post(
-        `http://localhost:3000/api/jobs/${jobId}/apply`,
+        `${baseUrl}/api/jobs/${jobId}/apply`,
         formData,
         {
           headers: {

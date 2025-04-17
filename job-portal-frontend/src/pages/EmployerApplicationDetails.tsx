@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useStore } from "../store";
+import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 import { Application } from "../types"; // adjust the path based on your folder structure
 
 const EmployerApplicationDetails = () => {
@@ -17,7 +18,7 @@ const EmployerApplicationDetails = () => {
     const newStatus = e.target.value;
     try {
       await axios.patch(
-        `http://localhost:3000/api/applications/${id}`,
+        `${baseUrl}/api/applications/${id}`,
         { status: newStatus },
         {
           headers: {
@@ -35,7 +36,7 @@ const EmployerApplicationDetails = () => {
     const fetchApplication = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/applications/${id}`,
+          `${baseUrl}/api/applications/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

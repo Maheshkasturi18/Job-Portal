@@ -1,10 +1,11 @@
 // JobDetails.tsx
 import React, { useEffect, useState } from "react";
-import {useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MapPin, Building2, Clock, Send } from "lucide-react";
 import { useStore } from "../store";
 import { Job } from "../types";
 import axios from "axios";
+import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 
 function JobDetails() {
   const { id } = useParams();
@@ -17,7 +18,7 @@ function JobDetails() {
   useEffect(() => {
     async function fetchJob() {
       try {
-        const response = await axios.get(`http://localhost:3000/api/jobs/${id}`, {
+        const response = await axios.get(`${baseUrl}/api/jobs/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { LogIn } from "lucide-react";
 import { useStore } from "../store";
 import axios from "axios";
+import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 
 function Login() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/api/login", {
+      const response = await axios.post(`${baseUrl}/api/login`, {
         email,
         password,
       });

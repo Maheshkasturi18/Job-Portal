@@ -12,6 +12,7 @@ import {
 import { useStore } from "../store";
 import { Application } from "../types";
 import axios from "axios";
+import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 
 function JobSeekerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
@@ -32,7 +33,7 @@ function JobSeekerDashboard() {
         // }
 
         const response = await axios.get(
-          `http://localhost:3000/api/applications`,
+          `${baseUrl}/api/applications`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

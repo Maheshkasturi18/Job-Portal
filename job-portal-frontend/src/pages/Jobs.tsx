@@ -6,6 +6,7 @@ import { useStore } from "../store";
 import { Job } from "../types";
 import axios from "axios";
 import { Pencil, Trash2 } from "lucide-react";
+import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 
 function Jobs() {
   const isDarkMode = useStore((state) => state.isDarkMode);
@@ -28,7 +29,7 @@ function Jobs() {
         if (selectedCategory) queryParams.append("category", selectedCategory);
 
         const response = await axios.get(
-          `http://localhost:3000/api/jobs?${queryParams.toString()}`
+          `${baseUrl}/api/jobs?${queryParams.toString()}`
         );
 
         setJobs(response.data);
@@ -57,7 +58,7 @@ function Jobs() {
     if (!confirm) return;
 
     try {
-      const res = await axios.delete(`http://localhost:3000/api/jobs/${id}`, {
+      const res = await axios.delete(`${baseUrl}/api/jobs/${id}`, {
         headers: {
           Authorization: `Bearer ${currentUser.token}`,
         },
