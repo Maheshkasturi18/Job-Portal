@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useStore } from "../store";
 import axios from "axios";
+import { baseUrl } from "../Url";
 
 interface JobData {
   title: string;
@@ -40,7 +41,7 @@ function CreateJob() {
   useEffect(() => {
     if (isEditMode && id && token) {
       axios
-        .get(`/api/jobs/${id}`, {
+        .get(`${baseUrl}/api/jobs/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -69,14 +70,14 @@ function CreateJob() {
       if (isEditMode && id) {
         // update
         await axios.patch(
-          `/api/jobs/${id}`,
+          `${baseUrl}/api/jobs/${id}`,
           { ...jobData, salary: Number(jobData.salary) },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         // create
         await axios.post(
-          "/api/jobs",
+          `${baseUrl}/api/jobs`,
           { ...jobData, salary: Number(jobData.salary) },
           { headers: { Authorization: `Bearer ${token}` } }
         );
