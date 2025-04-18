@@ -28,14 +28,19 @@ function Jobs() {
         if (searchTerm) queryParams.append("title", searchTerm);
         if (selectedCategory) queryParams.append("category", selectedCategory);
 
-        const response = await axios.get(
-          `${baseUrl}/api/jobs?${queryParams.toString()}`
-        );
+        const endpoint =
+          currentUser?.role === "employer"
+            ? `${baseUrl}/api/employer/jobs?${queryParams}`
+            : `${baseUrl}/api/jobs?${queryParams}`;
 
-        setJobs(response.data);
-        console.log("Fetched jobs:", response.data); // debugger check
-        setLoading(false);
-        setError(null); // Clear error on successful fetch
+        const resp = await axios.get<Job[]>(endpoint, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+
+        console.log("Fetched jobs (before-filter):", resp.data);
+
+        setJobs(resp.data);
+        setError(null);
       } catch (error) {
         console.error("Error fetching jobs:", error);
         setError("Failed to fetch jobs. Please try again later.");
@@ -47,20 +52,30 @@ function Jobs() {
     fetchJobs(); // ✅ Always fetch, with or without token
   }, [searchTerm, selectedCategory]);
 
+  // No need to filter anymore — jobs already come filtered from backend
+  const visibleJobs = React.useMemo(() => jobs, [jobs]);
+
+  console.log("Visible jobs:", visibleJobs);
+
+  // Get distinct categories from jobs list
+  const categories = React.useMemo(() => {
+    return Array.from(new Set(jobs.map((j) => j.category)));
+  }, [jobs]);
+
   // Get distinct categories from fetched jobs
-  const categories = Array.isArray(jobs)
-    ? [...new Set(jobs.map((job) => job.category))]
-    : [];
+  // const categories = Array.isArray(jobs)
+  //   ? [...new Set(jobs.map((job) => job.category))]
+  //   : [];
 
   const handleDelete = async (id: string) => {
-    if (!currentUser?.token) return;
+    if (!token) return;
     const confirm = window.confirm("Are you sure you want to delete this job?");
     if (!confirm) return;
 
     try {
       const res = await axios.delete(`${baseUrl}/api/jobs/${id}`, {
         headers: {
-          Authorization: `Bearer ${currentUser.token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -78,7 +93,12 @@ function Jobs() {
   return (
     <div className={`${isDarkMode ? "text-white" : "text-gray-900"}`}>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">Find Your Next Opportunity</h1>
+        <h1 className="text-3xl font-bold mb-4">
+          {currentUser?.role === "employer"
+            ? "Manage Your Job Listings"
+            : "Find Your Next Opportunity"}
+        </h1>
+
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex-1">
             <div
@@ -118,95 +138,95 @@ function Jobs() {
         <div>Loading jobs...</div>
       ) : error ? (
         <div className="bg-red-100 text-red-700 p-3 mb-4 rounded">{error}</div>
+      ) : visibleJobs.length === 0 ? (
+        <p className="text-center mt-8 text-gray-500">
+          {currentUser?.role === "employer"
+            ? "You haven’t posted any jobs yet."
+            : "No jobs found."}
+        </p>
       ) : (
         <div className="grid gap-6">
-          {jobs.length > 0 ? (
-            jobs.map((job) => {
-              currentUser?.role === "employer" &&
-                (currentUser._id === job.employerId ||
-                  currentUser._id === job.employerId);
-
-              return (
-                <div
-                  key={job._id}
-                  className={`relative px-4 py-14 md:p-14 rounded-lg shadow-md transition ${
-                    isDarkMode
-                      ? "bg-gray-800 hover:bg-gray-700"
-                      : "bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  <Link to={`/jobs/${job._id}`} className="block">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h2 className="text-xl font-semibold mb-2">
-                          {job.title}
-                        </h2>
-                        <div className="flex items-center text-gray-500 mb-2">
-                          <Building2 className="w-4 h-4 mr-1" />
-                          <span className="mr-4">{job.company}</span>
-                          <MapPin className="w-4 h-4 mr-1" />
-                          <span>{job.location}</span>
-                        </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          <span
-                            className={`px-3 py-1 rounded-full text-sm ${
-                              isDarkMode ? "bg-gray-700" : "bg-gray-100"
-                            }`}
-                          >
-                            {job.type}
-                          </span>
-                          <span
-                            className={`px-3 py-1 rounded-full text-sm ${
-                              isDarkMode ? "bg-gray-700" : "bg-gray-100"
-                            }`}
-                          >
-                            {job.category}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-semibold text-blue-600">
-                          ₹ {job.salary}
-                        </div>
-                        <div className="flex items-center text-gray-500 mt-2">
-                          <Clock className="w-4 h-4 mr-1" />
-                          <span className="text-sm">
-                            Posted{" "}
-                            {new Date(job.postedDate).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
+          {visibleJobs.map((job) => (
+            <div
+              key={job._id}
+              className={`relative px-4 py-14 md:p-14 rounded-lg shadow-md transition ${
+                isDarkMode
+                  ? "bg-gray-800 hover:bg-gray-700"
+                  : "bg-white hover:bg-gray-50"
+              }`}
+            >
+              <Link to={`/jobs/${job._id}`} className="block">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-xl font-semibold mb-2">{job.title}</h2>
+                    <div className="flex items-center text-gray-500 mb-2">
+                      <Building2 className="w-4 h-4 mr-1" />
+                      <span className="mr-4">{job.company}</span>
+                      <MapPin className="w-4 h-4 mr-1" />
+                      <span>{job.location}</span>
                     </div>
-                  </Link>
-
-                  {currentUser?.role === "employer" && (
-                    <div className="absolute top-4 right-4 flex gap-3">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          navigate(`/employer/create-job/${job._id}`);
-                        }}
-                        className="text-blue-600 hover:text-blue-800"
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm ${
+                          isDarkMode ? "bg-gray-700" : "bg-gray-100"
+                        }`}
                       >
-                        <Pencil size={18} />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleDelete(job._id);
-                        }}
-                        className="text-red-600 hover:text-red-800"
+                        {job.type}
+                      </span>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm ${
+                          isDarkMode ? "bg-gray-700" : "bg-gray-100"
+                        }`}
                       >
-                        <Trash2 size={18} />
-                      </button>
+                        {job.category}
+                      </span>
                     </div>
-                  )}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-md font-semibold text-blue-600">
+                      {job.currency === "INR" && "₹"}
+                      {job.currency === "USD" && "$"}
+                      {job.currency === "EUR" && "€"}
+                      {job.salaryMin} – {job.salaryMax}{" "}
+                      {job.salaryType === "per_month" && "per month"}
+                      {job.salaryType === "per_annum" && "per annum"}
+                      {job.salaryType === "per_hour" && "per hour"}
+                    </div>
+
+                    <div className="flex items-center text-gray-500 mt-2">
+                      <Clock className="w-4 h-4 mr-1" />
+                      <span className="text-sm">
+                        Posted {new Date(job.postedDate).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              );
-            })
-          ) : (
-            <p className="text-center mt-8 text-gray-500">No jobs found.</p>
-          )}
+              </Link>
+
+              {currentUser?.role === "employer" && (
+                <div className="absolute top-4 right-4 flex gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/employer/create-job/${job._id}`);
+                    }}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleDelete(job._id);
+                    }}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

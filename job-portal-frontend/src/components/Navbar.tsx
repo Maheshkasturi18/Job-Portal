@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef , useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Sun, Moon, User, Menu, LogOut, X } from "lucide-react";
 import { useStore } from "../store";
@@ -10,12 +10,27 @@ function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleLogout = () => {
     localStorage.clear();
     setCurrentUser(null);
     navigate("/login");
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav
@@ -55,7 +70,7 @@ function Navbar() {
             )}
 
             {currentUser ? (
-              <div className="relative">
+              <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className={`text-sm font-medium ${
@@ -137,7 +152,7 @@ function Navbar() {
           <Link
             to="/jobs"
             className={`block py-2  hover:text-blue-600 ${
-              isDarkMode ?"text-white" : "text-gray-800"
+              isDarkMode ? "text-white" : "text-gray-800"
             }`}
           >
             Jobs

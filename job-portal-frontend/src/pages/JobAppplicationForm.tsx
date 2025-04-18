@@ -86,7 +86,12 @@ export default function JobApplicationForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className={`max-w-md mx-auto space-y-4 p-6 border rounded-lg shadow-md  ${
+        isDarkMode ? "bg-gray-800" : "bg-white"
+      }`}
+    >
       {error && <div className="text-red-600">{error}</div>}
 
       <div>
@@ -102,7 +107,9 @@ export default function JobApplicationForm() {
           type="text"
           value={formData.fullName}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           required
         />
       </div>
@@ -120,7 +127,9 @@ export default function JobApplicationForm() {
           type="email"
           value={formData.email}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           required
         />
       </div>
@@ -138,7 +147,9 @@ export default function JobApplicationForm() {
           type="tel"
           value={formData.phone}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           required
         />
       </div>
@@ -156,7 +167,9 @@ export default function JobApplicationForm() {
           type="text"
           value={formData.location}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           required
         />
       </div>
@@ -174,7 +187,9 @@ export default function JobApplicationForm() {
           type="text"
           value={formData.jobTitle}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           required
         />
       </div>
@@ -192,7 +207,9 @@ export default function JobApplicationForm() {
           type="url"
           value={formData.resumeLink}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           placeholder="https://drive.google.com/..."
           required
         />
@@ -211,7 +228,9 @@ export default function JobApplicationForm() {
           type="url"
           value={formData.linkedin}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           placeholder="https://linkedin.com/in/..."
         />
       </div>
@@ -229,7 +248,9 @@ export default function JobApplicationForm() {
           type="url"
           value={formData.portfolio}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           placeholder="https://github.com/..."
         />
       </div>
@@ -246,7 +267,9 @@ export default function JobApplicationForm() {
           name="experience"
           value={formData.experience}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           rows={3}
         />
       </div>
@@ -263,7 +286,9 @@ export default function JobApplicationForm() {
           name="education"
           value={formData.education}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           rows={2}
         />
       </div>
@@ -280,7 +305,9 @@ export default function JobApplicationForm() {
           name="coverLetter"
           value={formData.coverLetter}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          className={`w-full p-2 border rounded ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+          }`}
           rows={4}
         />
       </div>

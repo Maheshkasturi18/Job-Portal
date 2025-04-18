@@ -18,19 +18,22 @@ import axios from "axios";
 import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 import { useNavigate } from "react-router-dom";
 
+
+
 function EmployerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
   const currentUser = useStore((state) => state.currentUser);
   const token = currentUser?.token;
   const navigate = useNavigate();
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [applications, setApplications] = useState<
-    {
-      jobId: string;
-      status: string;
-      [key: string]: any;
-    }[]
-  >([]);
+  // const [applications, setApplications] = useState<
+  //   {
+  //     jobId: string;
+  //     status: string;
+  //     [key: string]: any;
+  //   }[]
+  // >([]);
+  const [applications, setApplications] = useState<Application[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -43,17 +46,18 @@ function EmployerDashboard() {
         if (selectedCategory) queryParams.append("category", selectedCategory);
 
         const resJobs = await axios.get(
-          `${baseUrl}/api/jobs?${queryParams.toString()}`,
+          `${baseUrl}/api/employer/jobs?${queryParams.toString()}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        console.log("Query string:", queryParams.toString());
-        console.log(
-          "Full URL:",
-          `${baseUrl}/api/jobs?${queryParams.toString()}`
-        );
-        console.log("Employee dashboard jobs list:", resJobs.data);
+    
+        // console.log("Query string:", queryParams.toString());
+        // console.log(
+        //   "Full URL:",
+        //   `${baseUrl}/api/jobs?${queryParams.toString()}`
+        // );
+        // console.log("Employee dashboard jobs list:", resJobs.data);
         setJobs(resJobs.data);
 
         // fetch all applications

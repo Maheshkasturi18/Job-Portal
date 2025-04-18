@@ -138,13 +138,14 @@ const EmployerApplicationDetails = () => {
             onChange={handleStatusChange}
           >
             <option value="pending">Pending</option>
+            <option value="reviewed">Reviewed</option>
             <option value="accepted">Accepted</option>
             <option value="rejected">Rejected</option>
           </select>
         </div>
         <Detail
           label="Applied On"
-          value={new Date(application.createdAt).toLocaleDateString()}
+          value={new Date(application.appliedAt).toLocaleDateString()}
         />
       </div>
     </div>

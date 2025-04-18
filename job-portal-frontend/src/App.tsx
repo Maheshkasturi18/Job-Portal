@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useStore } from './store';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Jobs from './pages/Jobs';
-import JobDetails from './pages/JobDetails';
-import EmployerDashboard from './pages/EmployerDashboard';
-import JobSeekerDashboard from './pages/JobSeekerDashboard';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import CreateJob from './pages/CreateJob';
-import JobApplicationForm from './pages/JobAppplicationForm';
-import EmployerApplicationDetails from './pages/EmployerApplicationDetails';
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useStore } from "./store";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Jobs from "./pages/Jobs";
+import JobDetails from "./pages/JobDetails";
+import EmployerDashboard from "./pages/EmployerDashboard";
+import JobSeekerDashboard from "./pages/JobSeekerDashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import CreateJob from "./pages/CreateJob";
+import JobApplicationForm from "./pages/JobAppplicationForm";
+import EmployerApplicationDetails from "./pages/EmployerApplicationDetails";
 
 function App() {
   const isDarkMode = useStore((state) => state.isDarkMode);
@@ -31,7 +31,11 @@ function App() {
   }, [setCurrentUser]);
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
+    <div
+      className={`min-h-screen ${
+        isDarkMode ? "dark bg-gray-900" : "bg-gray-50"
+      }`}
+    >
       <BrowserRouter>
         <Navbar />
         <main className="container mx-auto px-4 py-8">
@@ -40,13 +44,16 @@ function App() {
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/employer/dashboard" element={<EmployerDashboard />} />
-            <Route path="/jobseeker/dashboard" element={<JobSeekerDashboard />} />
+            <Route path="/jobseeker/dashboard" element={<JobSeekerDashboard/>} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/employer/create-job" element={<CreateJob />} />
             <Route path="/employer/create-job/:id" element={<CreateJob />} />
             <Route path="/jobs/:id/apply" element={<JobApplicationForm />} />
-            <Route path="/employer/applications/:id" element={<EmployerApplicationDetails />} />
+            <Route
+              path="/employer/applications/:id"
+              element={<EmployerApplicationDetails />}
+            />
           </Routes>
         </main>
       </BrowserRouter>

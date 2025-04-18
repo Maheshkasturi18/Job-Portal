@@ -5,7 +5,6 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
-const multer = require('multer');
 const path = require('path');
 
 const app = express();
@@ -21,15 +20,6 @@ mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true 
     .then(() => console.log('✅ Connected to MongoDB'))
     .catch(err => console.error('❌ MongoDB connection error:', err));
 
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, './uploads/resumes'),
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `${req.user.id}-${Date.now()}${ext}`);
-    }
-});
-const upload = multer({ storage });
 
 // make sure ./uploads/resumes exists and is served statically:
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -77,6 +67,7 @@ app.post('/api/login', async (req, res) => {
     res.json({
         token,
         user: {
+            // _id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
@@ -115,9 +106,14 @@ function authorizeRoles(...roles) {
 const jobSchema = new mongoose.Schema({
     title: { type: String, required: true },
     description: String,
+    requirements: String,
+    company: String,
     location: String,
     category: String,
-    salary: Number,
+    salaryMin: String,
+    salaryMax: String,
+    salaryType: { type: String, enum: ['per_month', 'per_annum', 'per_hour'] },
+    currency: { type: String, enum: ['INR', 'USD', 'EUR'], default: 'INR' },
     type: String,
     employerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     postedDate: { type: Date, default: Date.now },
@@ -128,13 +124,24 @@ const Job = mongoose.model('Job', jobSchema);
 // Create Job (Employer Only)
 app.post('/api/jobs', authenticateToken, authorizeRoles('employer'), async (req, res) => {
     try {
-        const { title, description, location, category, salary, type } = req.body;
+        const { title, description, requirements, company, location, category, salaryMin, salaryMax, salaryType, currency, type } = req.body;
+
+        // ✅ Salary range validation
+        if (salaryMin && salaryMax && Number(salaryMin) > Number(salaryMax)) {
+            return res.status(400).json({ message: "Min salary cannot be greater than max salary" });
+        }
+
         const job = new Job({
             title,
             description,
+            requirements,
+            company,
             location,
             category,
-            salary,
+            salaryMin,
+            salaryMax,
+            salaryType,
+            currency,
             type,
             employerId: req.user.id
         });
@@ -172,6 +179,23 @@ app.get('/api/jobs/:id', async (req, res) => {
         res.status(500).json({ message: 'Error fetching job', error: err.message });
     }
 });
+
+app.get('/api/employer/jobs', authenticateToken, authorizeRoles('employer'), async (req, res) => {
+    try {
+        const { title, category, location } = req.query;
+        const filter = { employerId: req.user.id };
+
+        if (title) filter.title = new RegExp(title, 'i');
+        if (category) filter.category = category;
+        if (location) filter.location = new RegExp(location, 'i');
+
+        const jobs = await Job.find(filter).sort({ postedDate: -1 });
+        res.json(jobs);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching employer jobs', error: err.message });
+    }
+});
+
 
 // Update Job (Employer Owner Only)
 app.patch('/api/jobs/:id', authenticateToken, authorizeRoles('employer'), async (req, res) => {
@@ -218,7 +242,7 @@ const applicationSchema = new mongoose.Schema({
     email: { type: String, required: true },
     phone: { type: String, required: true },
     location: { type: String, required: true },
-    jobTitle:{ type: String, required: true },
+    jobTitle: { type: String, required: true },
     resumeLink: { type: String, required: true },
     linkedin: { type: String, default: '' },
     portfolio: { type: String, default: '' },
@@ -226,7 +250,7 @@ const applicationSchema = new mongoose.Schema({
     education: { type: String, default: '' },
     coverLetter: { type: String, default: '' },
 
-    status: { type: String, enum: ['pending', 'accepted', 'rejected'], default: 'pending' },
+    status: { type: String, enum: ['pending', 'reviewed', 'accepted', 'rejected'], default: 'pending' },
     appliedAt: { type: Date, default: Date.now },
 });
 
@@ -351,37 +375,37 @@ app.get(
 
 app.patch('/api/applications/:id', authenticateToken, async (req, res) => {
     try {
-      const { id } = req.params;
-      const { status } = req.body;
-  
-      if (!['pending', 'accepted', 'rejected'].includes(status)) {
-        return res.status(400).json({ message: 'Invalid status value.' });
-      }
-  
-      const application = await Application.findById(id).populate('jobId');
-  
-      if (!application) {
-        return res.status(404).json({ message: 'Application not found' });
-      }
-  
-      // Ensure only employer who posted the job can update
-      if (
-        req.user.role !== 'employer' ||
-        application.jobId.employerId.toString() !== req.user.id
-      ) {
-        return res.status(403).json({ message: 'Unauthorized' });
-      }
-  
-      application.status = status;
-      await application.save();
-  
-      res.json({ message: 'Application status updated successfully', application });
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if (!['pending', 'reviewed', 'accepted', 'rejected'].includes(status)) {
+            return res.status(400).json({ message: 'Invalid status value.' });
+        }
+
+        const application = await Application.findById(id).populate('jobId');
+
+        if (!application) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+
+        // Ensure only employer who posted the job can update
+        if (
+            req.user.role !== 'employer' ||
+            application.jobId.employerId.toString() !== req.user.id
+        ) {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
+
+        application.status = status;
+        await application.save();
+
+        res.json({ message: 'Application status updated successfully', application });
     } catch (err) {
-      console.error('Error updating application status:', err);
-      res.status(500).json({ message: 'Error updating application status', error: err.message });
+        console.error('Error updating application status:', err);
+        res.status(500).json({ message: 'Error updating application status', error: err.message });
     }
-  });
-  
+});
+
 
 // =======================
 // Start Server

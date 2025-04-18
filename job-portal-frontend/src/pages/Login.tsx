@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { LogIn } from "lucide-react";
 import { useStore } from "../store";
 import axios from "axios";
+import { Eye, EyeOff } from "lucide-react";
 import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const isDarkMode = useStore((state) => state.isDarkMode);
   const setCurrentUser = useStore((state) => state.setCurrentUser);
@@ -84,7 +86,7 @@ function Login() {
               required
             />
           </div>
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <label
               className={`block mb-2 ${
                 isDarkMode ? "text-white" : "text-gray-800"
@@ -101,6 +103,32 @@ function Login() {
               }`}
               required
             />
+          </div> */}
+          <div className="mb-6 relative">
+            <label
+              className={`block mb-2 ${
+                isDarkMode ? "text-white" : "text-gray-800"
+              }`}
+            >
+              Password
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`w-full p-3 pr-10 rounded-lg border ${
+                isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+              }`}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 text-gray-700 hover:text-gray-700 dark:text-gray-500"
+              style={{ bottom: "15px" }}
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
           <button
             type="submit"

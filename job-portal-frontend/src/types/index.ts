@@ -5,23 +5,24 @@ export interface Job {
   company: string;
   location: string;
   type: string;
-  salary: string;
   description: string;
   requirements: string[];
   postedDate: string;
   category: string;
+  salaryMin: number;
+  salaryMax: number;
+  salaryType: "per_month" | "per_annum" | "per_hour";
+  currency: "INR" | "USD" | "EUR";
 }
 
 export interface Application {
   _id: string;
-  jobId: string;
+  jobId: Job | string;
   jobTitle: string;
-  // company: string;
+  company: string;
   // userId: string;
   // status: 'pending' | 'reviewed' | 'rejected' | 'accepted';
   appliedDate: string;
-  // coverLetter: string;
-  // resume: string;
   fullName: string;
   email: string;
   phone: string;
@@ -33,15 +34,14 @@ export interface Application {
   education?: string;
   coverLetter?: string;
   status: string;
-  createdAt: string;
+  appliedAt: string;
 }
 
 export interface User {
   _id: string;
   token: string;
-  // id: string;
   name: string;
   email: string;
-  role: 'employer' | 'jobseeker';
+  role: "employer" | "jobseeker";
   company?: string;
 }

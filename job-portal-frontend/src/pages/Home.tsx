@@ -30,12 +30,20 @@ function Home() {
           >
             Browse Jobs
           </Link>
-          <button
+          {/* <button
             onClick={handlePostJobClick}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
           >
             Post a Job
-          </button>
+          </button> */}
+          {currentUser?.role !== "jobseeker" && (
+            <button
+              onClick={handlePostJobClick}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Post a Job
+            </button>
+          )}
         </div>
       </div>
       <div className="grid md:grid-cols-3 gap-8 mt-16">
