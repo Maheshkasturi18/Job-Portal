@@ -109,8 +109,7 @@ function Navbar() {
                 )}
               </div>
             ) : (
-              <div>
-                <>
+              <>
                 <Link
                   to="/register"
                   className={`${
@@ -128,8 +127,7 @@ function Navbar() {
                 >
                   Login
                 </Link>
-                </>
-              </div>
+              </>
             )}
 
             <button
@@ -202,12 +200,22 @@ function Navbar() {
               </button>
             </div>
           ) : (
-            <Link
-              to="/login"
-              className="block py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600"
-            >
-              Login
-            </Link>
+            <>
+              <Link
+                to="/register"
+                className={`${
+                  isDarkMode ? "text-gray-300" : "text-gray-700"
+                } hover:text-blue-600`}
+              >
+                Register
+              </Link>
+              <Link
+                to="/login"
+                className="block py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600"
+              >
+                Login
+              </Link>
+            </>
           )}
         </div>
       )}
