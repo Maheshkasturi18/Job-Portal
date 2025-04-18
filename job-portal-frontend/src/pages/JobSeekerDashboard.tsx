@@ -12,7 +12,16 @@ import {
 import { useStore } from "../store";
 import { Application } from "../types";
 import axios from "axios";
+import {
+  startOfWeek,
+  differenceInCalendarWeeks,
+  subWeeks,
+  parseISO,
+  isAfter,
+} from "date-fns";
 import { baseUrl } from "../Url"; // adjust the path based on your folder structure
+
+// console.log("JobSeekerDashboard component loaded", JobSeekerDashboard);
 
 function JobSeekerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
@@ -23,43 +32,60 @@ function JobSeekerDashboard() {
     { week: string; applications: number }[]
   >([]);
 
-  // Fetch applications for the current job seeker from backend
   useEffect(() => {
-    async function fetchApplications() {
+    const fetchApplications = async () => {
       try {
-        // if (!currentUser || !currentUser._id) {
-        //   console.error("Current user or userId is undefined");
-        //   return;
-        // }
+        const response = await axios.get(`${baseUrl}/api/applications`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        const response = await axios.get(
-          `${baseUrl}/api/applications`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        console.log("Token used for fetching applications:", token); // Debugging check
 
         console.log("Fetched applications:", response.data); // Debugging check
 
         setApplications(response.data);
         // Process data for chart (e.g., group by week)
-        const processedChartData = [
-          { week: "Week 1", applications: 3 },
-          { week: "Week 2", applications: 5 },
-          { week: "Week 3", applications: 2 },
-          { week: "Week 4", applications: 7 },
-        ];
+        // const processedChartData = [
+        //   { week: "Week 1", applications: 3 },
+        //   { week: "Week 2", applications: 5 },
+        //   { week: "Week 3", applications: 2 },
+        //   { week: "Week 4", applications: 7 },
+        // ];
+        // Dynamic chart data processing
+        const applications = response.data;
+
+        const now = new Date();
+        const startDate = startOfWeek(subWeeks(now, 3)); // Start of 4 weeks ago (Week 1)
+
+        const weekCounts = [0, 0, 0, 0]; // Week 1 to Week 4
+
+        applications.forEach((app: Application) => {
+          if (!app.appliedAt) return;
+          const appliedDate = parseISO(app.appliedAt);
+          if (isAfter(appliedDate, now)) return; // ignore future dates
+
+          const weekIndex = differenceInCalendarWeeks(appliedDate, startDate);
+          if (weekIndex >= 0 && weekIndex < 4) {
+            weekCounts[weekIndex] += 1;
+          }
+        });
+
+        const processedChartData = weekCounts.map((count, index) => ({
+          week: `Week ${index + 1}`,
+          applications: count,
+        }));
+
         setChartData(processedChartData);
       } catch (error) {
         console.error("Error fetching applications:", error);
       }
-    }
-    if (token && currentUser && currentUser._id) {
+    };
+    if (token) {
       fetchApplications();
     }
-  }, [currentUser, token]);
+  }, [token]);
 
   return (
     <div className={`${isDarkMode ? "text-white" : "text-gray-900"}`}>
@@ -162,9 +188,16 @@ function JobSeekerDashboard() {
                   }`}
                 >
                   <td className="px-6 py-4">{app.jobTitle || "N/A"}</td>
-                  {/* <td className="px-6 py-4">{app.company || "N/A"}</td> */}
                   <td className="px-6 py-4">
-                    {new Date(app.appliedDate).toLocaleDateString()}
+                    <td>
+                      {typeof app.jobId === "object" &&
+                      "company" in app.jobId !== null
+                        ? app.jobId.company
+                        : "N/A"}
+                    </td>
+                  </td>
+                  <td className="px-6 py-4">
+                    {new Date(app.appliedAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
                     <span
