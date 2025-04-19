@@ -79,12 +79,3 @@ This is a full-featured Job Portal web application built using the **MERN Stack 
 
 ---
 
-## 🛠️ Tech Stack
-
-- **Frontend**: React.js, React Router, Tailwind CSS (or any UI lib), Axios
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB (via Mongoose)
-- **Authentication**: JWT
-- **Extras**: Date-fns, Chart.js/Recharts (for analytics), Zustand for global state
-
----
