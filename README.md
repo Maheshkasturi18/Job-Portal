@@ -1,48 +1,90 @@
-# 🚀 Job Portal - MERN Stack Assessment
+# 💼 Job Portal - MERN Stack Assessment
 
-## 📌 Overview
-
-This project serves as a **starter template** for building a **fully functional Job Portal** using the **MERN (MongoDB, Express.js, React, Node.js) stack**.
-
-Candidates are expected to implement **both frontend and backend features** to deliver a **complete** job portal web application.
+This is a full-featured Job Portal web application built using the **MERN Stack (MongoDB, Express.js, React.js, Node.js)**. It supports **user authentication**, **role-based access control**, **job listings**, **applications**, and **analytics dashboards** for both employers and job seekers.
 
 ---
 
-## 🎯 Assessment Tasks
+## ✨ Features
 
-### 1️⃣ User Authentication System
+### 🔐 User Authentication & RBAC
 
-- Implement user authentication using **JWT** or **session-based authentication**.
-- Support **Role-Based Access Control (RBAC)** for **Employers** and **Job Seekers**.
+- Secure **JWT-based authentication**
+- **Role-based access control** for:
+  - **Job Seekers** – apply for jobs, track applications
+  - **Employers** – post jobs, manage listings, and view applicants
 
-### 2️⃣ Job Listings & Search
+### 💼 Job Listings
 
-- Develop **API endpoints** to **Create, Read, Update, and Delete (CRUD)** job listings.
-- Implement a **search and filtering system** for job listings.
+- **Employers** can **create, update, and delete** job posts
+- **Job Seekers** can **browse and search** jobs
+- Extended job form with fields like location, salary, type, etc.
 
-### 3️⃣ Job Application System
+### 📥 Job Application System
 
-- Allow **Job Seekers** to apply for jobs.
-- Enable **Employers** to **view applicants** for their job listings.
+- Job Seekers can **apply to jobs**
+- Employers can **view applicants** and update their **application status**:
+  - `Pending`, `Reviewed`, `Accepted`, `Rejected`
+- Job Seekers can track these updates in their **Dashboard**
 
-### 4️⃣ Employer & Job Seeker Dashboards
+### 📊 Dashboards
 
-- **Employers Dashboard**: Manage **job postings** and **view applicants**.
-- **Job Seekers Dashboard**: Track **applied jobs** and manage applications.
+- **Employer Dashboard**:
+  - Manage posted jobs
+  - View list of applicants
+  - Weekly application **analytics**
 
-### 5️⃣ Extend Functionality & Design
+- **Job Seeker Dashboard**:
+  - View applied jobs
+  - Track application status
+  - See dynamic **weekly activity chart**
 
-- Feel free to add **new features**, **improvements**, or **design enhancements** to showcase your skills.
+### 🌙 UI Enhancements
+
+- **Dark mode** toggle
+- **Logout** and **dynamic navbar** (shows username and role)
+- **"Post Job" button hidden for Job Seekers**
+- Responsive and user-friendly design
 
 ---
 
-## 📌 Submission Guidelines
+## 🚀 How to Use
 
-1. **Push your code** to a **GitHub repository**.
-2. Provide a **README.md** with:
-   - **Setup Instructions**
-   - **Features & Implementation Details**
-3. **Deploy the application** on any hosting platform (**Vercel, Render, etc.**).
-4. **Submit the live link** along with the **repository link**.
+### 1️⃣ Visit the Website
+
+- Landing page shows **Browse Jobs** and **Post Job** options
+- You must **sign up** to apply or post jobs
+
+### 2️⃣ Sign Up & Choose Role
+
+- Create an account by selecting either:
+  - **Job Seeker**
+  - **Employer**
+
+### 3️⃣ Role-Based Features
+
+#### 👤 Job Seekers
+
+- Browse jobs and apply via the application form
+- View **application status** in your dashboard
+- View **analytics** of applications over time
+
+#### 🧑‍💼 Employers
+
+- Create job listings
+- View & manage job posts (only their own)
+- View applicants and change application statuses
+- Analytics dashboard to track application trends
+
+> ✅ Employers can **only see and manage their own jobs** and applicants — no cross-access between employers.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React.js, React Router, Tailwind CSS (or any UI lib), Axios
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB (via Mongoose)
+- **Authentication**: JWT
+- **Extras**: Date-fns, Chart.js/Recharts (for analytics), Zustand for global state
 
 ---
