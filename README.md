@@ -1,4 +1,4 @@
-# 💼 Job Portal - MERN Stack Assessment
+# 💼 Job Portal - 
 
 This is a full-featured Job Portal web application built using the **MERN Stack (MongoDB, Express.js, React.js, Node.js)**. It supports **user authentication**, **role-based access control**, **job listings**, **applications**, and **analytics dashboards** for both employers and job seekers.
 
