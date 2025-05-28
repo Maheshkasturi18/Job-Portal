@@ -14,6 +14,8 @@ import { Application } from "../types";
 import axios from "axios";
 import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 
+console.log("🔥 FILE LOADED: JobSeekerDashboard.tsx");
+
 function JobSeekerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
   const currentUser = useStore((state) => state.currentUser);
@@ -32,14 +34,11 @@ function JobSeekerDashboard() {
         //   return;
         // }
 
-        const response = await axios.get(
-          `${baseUrl}/api/applications`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${baseUrl}/api/applications`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         console.log("Fetched applications:", response.data); // Debugging check
 
@@ -162,9 +161,14 @@ function JobSeekerDashboard() {
                   }`}
                 >
                   <td className="px-6 py-4">{app.jobTitle || "N/A"}</td>
-                  {/* <td className="px-6 py-4">{app.company || "N/A"}</td> */}
                   <td className="px-6 py-4">
-                    {new Date(app.appliedDate).toLocaleDateString()}
+                    {typeof app.jobId === "object" && "company" in app.jobId
+                      ? app.jobId.company
+                      : "N/A"}
+                  </td>
+
+                  <td className="px-6 py-4">
+                    {new Date(app.appliedAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4">
                     <span

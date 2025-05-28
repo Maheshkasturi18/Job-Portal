@@ -149,14 +149,14 @@ function Jobs() {
           {visibleJobs.map((job) => (
             <div
               key={job._id}
-              className={`relative px-4 py-14 md:p-14 rounded-lg shadow-md transition ${
+              className={`relative p-4 md:p-6 rounded-lg shadow-md transition ${
                 isDarkMode
                   ? "bg-gray-800 hover:bg-gray-700"
                   : "bg-white hover:bg-gray-50"
               }`}
             >
               <Link to={`/jobs/${job._id}`} className="block">
-                <div className="flex justify-between items-start">
+                <div className="flex flex-col gap-5 md:flex-row justify-between items-start">
                   <div>
                     <h2 className="text-xl font-semibold mb-2">{job.title}</h2>
                     <div className="flex items-center text-gray-500 mb-2">
@@ -200,6 +200,12 @@ function Jobs() {
                       </span>
                     </div>
                   </div>
+                </div>
+
+                <div className="mt-8 text-end">
+                  <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                    Apply Now
+                  </button>
                 </div>
               </Link>
 
