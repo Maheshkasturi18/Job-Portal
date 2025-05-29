@@ -168,70 +168,86 @@ function Home() {
           </Link>
         </div>
 
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8 mt-8">
-          {visibleJobs.map((job) => (
-            <div
-              key={job._id}
-              className={`p-6 rounded-lg ${
-                isDarkMode ? "bg-gray-800" : "bg-white"
-              } shadow-lg`}
-            >
-              <Link to={`/jobs/${job._id}`} className="block">
-                <div className="flex flex-col gap-5 justify-between items-start">
-                  <div>
-                    <h2 className="text-xl font-semibold mb-2">{job.title}</h2>
-                    <div className="flex items-center text-gray-500 mb-2">
-                      <Building2 className="w-4 h-4 mr-1" />
-                      <span className="mr-4">{job.company}</span>
-                      <MapPin className="w-4 h-4 mr-1" />
-                      <span>{job.location}</span>
+        {loading ? (
+          <div>Loading jobs...</div>
+        ) : error ? (
+          <div className="bg-red-100 text-red-700 p-3 mb-4 rounded">
+            {error}
+          </div>
+        ) : visibleJobs.length === 0 ? (
+          <p className="text-center mt-8 text-gray-500">
+            {currentUser?.role === "employer"
+              ? "You haven’t posted any jobs yet."
+              : "No jobs found."}
+          </p>
+        ) : (
+          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8 mt-8">
+            {visibleJobs.map((job) => (
+              <div
+                key={job._id}
+                className={`p-6 rounded-lg ${
+                  isDarkMode ? "bg-gray-800" : "bg-white"
+                } shadow-lg`}
+              >
+                <Link to={`/jobs/${job._id}`} className="block">
+                  <div className="flex flex-col gap-5 justify-between items-start">
+                    <div>
+                      <h2 className="text-xl font-semibold mb-2">
+                        {job.title}
+                      </h2>
+                      <div className="flex items-center text-gray-500 mb-2">
+                        <Building2 className="w-4 h-4 mr-1" />
+                        <span className="mr-4">{job.company}</span>
+                        <MapPin className="w-4 h-4 mr-1" />
+                        <span>{job.location}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm ${
+                            isDarkMode ? "bg-gray-700" : "bg-gray-100"
+                          }`}
+                        >
+                          {job.type}
+                        </span>
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm ${
+                            isDarkMode ? "bg-gray-700" : "bg-gray-100"
+                          }`}
+                        >
+                          {job.category}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm ${
-                          isDarkMode ? "bg-gray-700" : "bg-gray-100"
-                        }`}
-                      >
-                        {job.type}
-                      </span>
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm ${
-                          isDarkMode ? "bg-gray-700" : "bg-gray-100"
-                        }`}
-                      >
-                        {job.category}
-                      </span>
+                    <div className="text-right">
+                      <div className="text-md font-semibold text-blue-600">
+                        {job.currency === "INR" && "₹"}
+                        {job.currency === "USD" && "$"}
+                        {job.currency === "EUR" && "€"}
+                        {job.salaryMin} – {job.salaryMax}{" "}
+                        {job.salaryType === "per_month" && "per month"}
+                        {job.salaryType === "per_annum" && "per annum"}
+                        {job.salaryType === "per_hour" && "per hour"}
+                      </div>
+
+                      <div className="flex items-center text-gray-500 mt-2">
+                        <Clock className="w-4 h-4 mr-1" />
+                        <span className="text-sm">
+                          Posted {new Date(job.postedDate).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-md font-semibold text-blue-600">
-                      {job.currency === "INR" && "₹"}
-                      {job.currency === "USD" && "$"}
-                      {job.currency === "EUR" && "€"}
-                      {job.salaryMin} – {job.salaryMax}{" "}
-                      {job.salaryType === "per_month" && "per month"}
-                      {job.salaryType === "per_annum" && "per annum"}
-                      {job.salaryType === "per_hour" && "per hour"}
-                    </div>
 
-                    <div className="flex items-center text-gray-500 mt-2">
-                      <Clock className="w-4 h-4 mr-1" />
-                      <span className="text-sm">
-                        Posted {new Date(job.postedDate).toLocaleDateString()}
-                      </span>
-                    </div>
+                  <div className="mt-8 text-end">
+                    <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                      Apply Now
+                    </button>
                   </div>
-                </div>
-
-                <div className="mt-8 text-end">
-                  <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-                    Apply Now
-                  </button>
-                </div>
-              </Link>
-            </div>
-          ))}
-        </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* job */}

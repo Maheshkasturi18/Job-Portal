@@ -1,4 +1,4 @@
-import React, { useState, useRef , useEffect} from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Sun, Moon, User, Menu, LogOut, X } from "lucide-react";
 import { useStore } from "../store";
@@ -20,7 +20,10 @@ function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
@@ -33,9 +36,7 @@ function Navbar() {
   }, []);
 
   return (
-    <nav
-      className={`${isDarkMode ? "dark bg-gray-800" : "bg-white"} shadow-md`}
-    >
+    <nav className={`${isDarkMode ? "dark bg-gray-800" : "bg-slate-200"}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link

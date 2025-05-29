@@ -1,6 +1,6 @@
 // Register.tsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserPlus } from "lucide-react";
 import axios from "axios";
 import { useStore } from "../store";
@@ -200,6 +200,13 @@ function Register() {
           >
             Create Account
           </button>
+
+          <Link
+            to={"/login"}
+            className="block text-center mt-2 text-blue-600 underline"
+          >
+            Already a User? Login
+          </Link>
         </form>
       </div>
     </div>

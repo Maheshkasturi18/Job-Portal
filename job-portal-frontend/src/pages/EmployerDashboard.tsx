@@ -18,8 +18,6 @@ import axios from "axios";
 import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 import { useNavigate } from "react-router-dom";
 
-
-
 function EmployerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
   const currentUser = useStore((state) => state.currentUser);
@@ -51,7 +49,7 @@ function EmployerDashboard() {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-    
+
         // console.log("Query string:", queryParams.toString());
         // console.log(
         //   "Full URL:",
@@ -61,12 +59,9 @@ function EmployerDashboard() {
         setJobs(resJobs.data);
 
         // fetch all applications
-        const resApps = await axios.get(
-          `${baseUrl}/api/applications`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const resApps = await axios.get(`${baseUrl}/api/applications`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         // const allApps: any[] = Array.isArray(resApps.data) ? resApps.data : [];
 
         const allApps: Application[] = Array.isArray(resApps.data)
@@ -285,42 +280,54 @@ function EmployerDashboard() {
               </tr>
             </thead>
             <tbody>
-              {applications.slice(0, 5).map((app) => (
-                <tr
-                  key={app._id}
-                  className={`${
-                    isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"
-                  }`}
-                >
-                  <td className="px-6 py-4">{app.jobTitle || "N/A"}</td>
-                  <td className="px-6 py-4">{app.fullName || "N/A"}</td>
-                  <td className="px-6 py-4">
-                    {new Date(app.appliedAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        app.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : app.status === "accepted"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => handleViewDetails(app as Application)}
-                      // onClick={() => handleViewDetails(app)}
-                      className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
-                    >
-                      View Details
-                    </button>
+              {applications.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="text-center px-6 py-4 text-gray-500"
+                  >
+                    No applications received yet.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                applications.slice(0, 5).map((app) => (
+                  <tr
+                    key={app._id}
+                    className={`${
+                      isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"
+                    }`}
+                  >
+                    <td className="px-6 py-4">{app.jobTitle || "N/A"}</td>
+                    <td className="px-6 py-4">{app.fullName || "N/A"}</td>
+                    <td className="px-6 py-4">
+                      {new Date(app.appliedAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm ${
+                          app.status === "pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : app.status === "accepted"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {app.status.charAt(0).toUpperCase() +
+                          app.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <button
+                        onClick={() => handleViewDetails(app as Application)}
+                        // onClick={() => handleViewDetails(app)}
+                        className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                      >
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

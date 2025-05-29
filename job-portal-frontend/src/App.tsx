@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import CreateJob from "./pages/CreateJob";
 import JobApplicationForm from "./pages/JobAppplicationForm";
 import EmployerApplicationDetails from "./pages/EmployerApplicationDetails";
+import Footer from "./components/Footer";
 
 function App() {
   const isDarkMode = useStore((state) => state.isDarkMode);
@@ -34,17 +35,20 @@ function App() {
     <div
       className={`min-h-screen ${
         isDarkMode ? "dark bg-gray-900" : "bg-gray-50"
-      }`}
+      } min-h-screen flex flex-col`}
     >
       <BrowserRouter>
         <Navbar />
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 py-8 flex-1">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/employer/dashboard" element={<EmployerDashboard />} />
-            <Route path="/jobseeker/dashboard" element={<JobSeekerDashboard/>} />
+            <Route
+              path="/jobseeker/dashboard"
+              element={<JobSeekerDashboard />}
+            />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/employer/create-job" element={<CreateJob />} />
@@ -56,6 +60,7 @@ function App() {
             />
           </Routes>
         </main>
+        <Footer />
       </BrowserRouter>
     </div>
   );

@@ -7,6 +7,7 @@ import { Job } from "../types";
 import axios from "axios";
 import { Pencil, Trash2 } from "lucide-react";
 import { baseUrl } from "../Url"; // adjust the path based on your folder structure
+import JobCardSkeleton from "../components/JobCardSkeleton"; // adjust the path based on your folder structure
 
 function Jobs() {
   const isDarkMode = useStore((state) => state.isDarkMode);
@@ -38,6 +39,8 @@ function Jobs() {
         });
 
         console.log("Fetched jobs (before-filter):", resp.data);
+
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
         setJobs(resp.data);
         setError(null);
@@ -90,14 +93,33 @@ function Jobs() {
     }
   };
 
+  const handlePostJobClick = () => {
+    if (!currentUser || currentUser.role !== "employer") {
+      navigate("/register");
+    } else {
+      navigate("/employer/create-job");
+    }
+  };
+
   return (
     <div className={`${isDarkMode ? "text-white" : "text-gray-900"}`}>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">
-          {currentUser?.role === "employer"
-            ? "Manage Your Job Listings"
-            : "Find Your Next Opportunity"}
-        </h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold">
+            {currentUser?.role === "employer"
+              ? "Manage Your Job Listings"
+              : "Find Your Next Opportunity"}
+          </h1>
+
+          {currentUser?.role !== "jobseeker" && (
+            <button
+              onClick={handlePostJobClick}
+              className={`bg-blue-600 px-6 py-2 rounded-lg hover:bg-blue-700 text-white `}
+            >
+              Post a Job
+            </button>
+          )}
+        </div>
 
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex-1">
@@ -125,7 +147,7 @@ function Jobs() {
               isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-900"
             } shadow-md`}
           >
-            <option value="">All Categories</option>
+            <option value="">Default</option>
             {categories.map((category) => (
               <option key={category} value={category}>
                 {category}
@@ -135,7 +157,11 @@ function Jobs() {
         </div>
       </div>
       {loading ? (
-        <div>Loading jobs...</div>
+        <div className="grid gap-6">
+          {[...Array(3)].map((_, index) => (
+            <JobCardSkeleton key={index} />
+          ))}
+        </div>
       ) : error ? (
         <div className="bg-red-100 text-red-700 p-3 mb-4 rounded">{error}</div>
       ) : visibleJobs.length === 0 ? (
@@ -149,7 +175,7 @@ function Jobs() {
           {visibleJobs.map((job) => (
             <div
               key={job._id}
-              className={`relative p-4 md:p-6 rounded-lg shadow-md transition ${
+              className={`relative p-8 rounded-lg shadow-md transition ${
                 isDarkMode
                   ? "bg-gray-800 hover:bg-gray-700"
                   : "bg-white hover:bg-gray-50"
@@ -210,7 +236,7 @@ function Jobs() {
               </Link>
 
               {currentUser?.role === "employer" && (
-                <div className="absolute top-4 right-4 flex gap-3">
+                <div className="absolute top-2 right-4 flex gap-3">
                   <button
                     onClick={(e) => {
                       e.preventDefault();
