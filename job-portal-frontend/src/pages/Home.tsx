@@ -195,10 +195,10 @@ function Home() {
                       <h2 className="text-xl font-semibold mb-2">
                         {job.title}
                       </h2>
-                      <div className="flex flex-col gap-4 items-center text-gray-500 mb-2">
+                      <div className="flex flex-col gap-2 text-gray-500 mb-2">
                         <div className="flex gap-2 items-center">
                           <Building2 className="w-4 h-4 mr-1" />
-                          <span className="mr-4">{job.company}</span>
+                          <span >{job.company}</span>
                         </div>
                         <div className="flex gap-2 items-center">
                           <MapPin className="w-4 h-4 mr-1" />
