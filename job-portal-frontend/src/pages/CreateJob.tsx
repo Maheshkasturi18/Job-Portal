@@ -97,7 +97,7 @@ function CreateJob() {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
-      navigate("/employer/dashboard");
+      navigate("/jobs");
     } catch (err: any) {
       setError(err.response?.data?.message || "Error saving job");
     }

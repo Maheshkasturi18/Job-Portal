@@ -21,7 +21,7 @@ import {
 } from "date-fns";
 import { baseUrl } from "../Url"; // adjust the path based on your folder structure
 
-// console.log("JobSeekerDashboard component loaded", JobSeekerDashboard);
+console.log("🔥 FILE LOADED: JobSeekerDashboard.tsx");
 
 function JobSeekerDashboard() {
   const isDarkMode = useStore((state) => state.isDarkMode);
@@ -40,8 +40,6 @@ function JobSeekerDashboard() {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        console.log("Token used for fetching applications:", token); // Debugging check
 
         console.log("Fetched applications:", response.data); // Debugging check
 
@@ -180,40 +178,50 @@ function JobSeekerDashboard() {
               </tr>
             </thead>
             <tbody>
-              {applications.map((app) => (
-                <tr
-                  key={app._id}
-                  className={`${
-                    isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"
-                  }`}
-                >
-                  <td className="px-6 py-4">{app.jobTitle || "N/A"}</td>
-                  <td className="px-6 py-4">
-                    <td>
-                      {typeof app.jobId === "object" &&
-                      "company" in app.jobId !== null
+              {applications.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="text-center px-6 py-4 text-gray-500"
+                  >
+                    No applications received yet.
+                  </td>
+                </tr>
+              ) : (
+                applications.map((app) => (
+                  <tr
+                    key={app._id}
+                    className={`${
+                      isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"
+                    }`}
+                  >
+                    <td className="px-6 py-4">{app.jobTitle || "N/A"}</td>
+                    <td className="px-6 py-4">
+                      {typeof app.jobId === "object" && "company" in app.jobId
                         ? app.jobId.company
                         : "N/A"}
                     </td>
-                  </td>
-                  <td className="px-6 py-4">
-                    {new Date(app.appliedAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        app.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : app.status === "accepted"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+
+                    <td className="px-6 py-4">
+                      {new Date(app.appliedAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm ${
+                          app.status === "pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : app.status === "accepted"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
+                      >
+                        {app.status.charAt(0).toUpperCase() +
+                          app.status.slice(1)}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

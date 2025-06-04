@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LogIn } from "lucide-react";
 import { useStore } from "../store";
 import axios from "axios";
@@ -136,6 +136,13 @@ function Login() {
           >
             Sign In
           </button>
+
+          <Link
+            to={"/register"}
+            className="block text-center mt-2 text-blue-600 underline"
+          >
+            Create an Account
+          </Link>
         </form>
       </div>
     </div>

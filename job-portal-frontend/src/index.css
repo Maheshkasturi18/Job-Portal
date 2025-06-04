@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Default Light Mode */
+:root {
+  --base-color: #ebebeb;
+  --highlight-color: #f5f5f5;
+}
+
+/* Dark Mode Overrides */
+.dark {
+  --base-color: #444;
+  --highlight-color: #666;
+}
+
+
+/* react slick */
+
+.slick-prev::before,
+.slick-next::before {
+  color: rgb(143, 143, 143) !important;
+}

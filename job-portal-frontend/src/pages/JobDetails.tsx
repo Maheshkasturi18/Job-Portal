@@ -16,6 +16,11 @@ function JobDetails() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!token || !currentUser) {
+      navigate("/login");
+      return;
+    }
+
     async function fetchJob() {
       try {
         const response = await axios.get(`${baseUrl}/api/jobs/${id}`, {
@@ -28,8 +33,8 @@ function JobDetails() {
         console.error("Error fetching job details:", error);
       }
     }
-    if (token) fetchJob();
-  }, [id, token]);
+    fetchJob();
+  }, [id, token, currentUser, navigate]);
 
   const handleApply = () => {
     if (!currentUser) {
@@ -112,6 +117,7 @@ function JobDetails() {
           >
             <h2 className="text-2xl font-bold mb-4">Job Description</h2>
             <p className="mb-6 whitespace-pre-line">{job.description}</p>
+            <p className="mb-6 whitespace-pre-line">{job.requirements}</p>
           </div>
         </div>
         <div>
