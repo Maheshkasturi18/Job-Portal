@@ -259,7 +259,7 @@ function Home() {
       <div className="bg-blue-600 rounded-xl px-4 py-8 md:p-12 text-white mb-16">
         <div className="text-center mb-12 md:mb-20">
           <h1 className="text-2xl md:text-3xl font-bold mb-4">
-            JobPortal in Numbers
+            JobHire in Numbers
           </h1>
 
           <p>
@@ -314,7 +314,7 @@ function Home() {
             <div className=" p-8  rounded-lg  ">
               <p className="text-xl mb-8">
                 "As a recent graduate, I was nervous about finding the right
-                job. Within two weeks of creating my profile on JobPortal, I
+                job. Within two weeks of creating my profile on JobHire, I
                 started receiving interview calls. I’m now working as a Junior
                 Developer at a great company!"
               </p>
@@ -330,7 +330,7 @@ function Home() {
             <div className="p-8  rounded-lg ">
               <p className="text-xl mb-8">
                 "After 5 years in sales, I decided to move into digital
-                marketing. JobPortal’s tailored job alerts and career resources
+                marketing. JobHire’s tailored job alerts and career resources
                 made the switch smooth. I’m now a Digital Marketing Analyst and
                 loving it!"
               </p>
@@ -345,7 +345,7 @@ function Home() {
 
             <div className="p-8  rounded-lg ">
               <p className="text-xl mb-8">
-                "Being a new mom, I needed a flexible remote job. JobPortal’s
+                "Being a new mom, I needed a flexible remote job. JobHire’s
                 filters helped me find exactly what I was looking for. I now
                 work remotely for a U.S.-based startup from the comfort of my
                 home"
@@ -362,7 +362,7 @@ function Home() {
             <div className="p-8  rounded-lg ">
               <p className="text-xl mb-8">
                 "I was looking for opportunities abroad and didn’t know where to
-                start. JobPortal made it possible by connecting me with a UK
+                start. JobHire made it possible by connecting me with a UK
                 recruiter. I now work in London as a Data Analyst!"
               </p>
               <div className="flex items-center gap-4">

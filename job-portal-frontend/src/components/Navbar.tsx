@@ -45,7 +45,7 @@ function Navbar() {
               isDarkMode ? "text-white" : "text-gray-900"
             }`}
           >
-            JobPortal
+            JobHire
           </Link>
 
           {/* Desktop Nav */}
